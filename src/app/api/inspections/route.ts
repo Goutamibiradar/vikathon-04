@@ -63,6 +63,41 @@ export async function POST(request: Request) {
     const calculatedScore = (c.cleanliness + c.foodHandling + c.pestControl + c.staffHygiene + c.temperatureControl) * 2;
     const finalGrade = calculateGrade(calculatedScore);
     const dateStr = new Date().toISOString().split('T')[0];
+    
+    // Process base64 image upload to Supabase Storage
+    if (body.imageUrl && body.imageUrl.startsWith('data:image')) {
+      try {
+        const match = body.imageUrl.match(/^data:(image\/\w+);base64,(.+)$/);
+        if (match) {
+          const mimeType = match[1];
+          const base64Data = match[2];
+          const buffer = Buffer.from(base64Data, 'base64');
+          
+          const ext = mimeType.split('/')[1] || 'jpeg';
+          const fileName = `${body.restaurantId}-${Date.now()}.${ext}`;
+          
+          const { error: uploadError } = await supabase
+            .storage
+            .from('inspection-images')
+            .upload(fileName, buffer, {
+              contentType: mimeType,
+            });
+            
+          if (uploadError) {
+            console.error('Failed to upload image to storage:', uploadError);
+          } else {
+            const { data: { publicUrl } } = supabase
+              .storage
+              .from('inspection-images')
+              .getPublicUrl(fileName);
+            
+            body.imageUrl = publicUrl;
+          }
+        }
+      } catch (uploadErr) {
+        console.error('Error processing image upload:', uploadErr);
+      }
+    }
 
     // Insert inspection report
     const { data: report, error: reportError } = await supabase
