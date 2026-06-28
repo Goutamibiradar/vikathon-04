@@ -13,7 +13,28 @@ type FreshnessResult = {
   shelfLife: string;
   storageRecommendation: string;
   safetyAdvice: string;
+  visualDetails?: string;
 };
+
+const stickers = [
+  { emoji: '🍎', top: '10%', left: '5%', delay: 0 },
+  { emoji: '🥑', top: '25%', left: '85%', delay: 1.5 },
+  { emoji: '🍔', top: '60%', left: '10%', delay: 3 },
+  { emoji: '🥦', top: '75%', left: '90%', delay: 2 },
+  { emoji: '🍕', top: '40%', left: '95%', delay: 0.5 },
+  { emoji: '🍣', top: '85%', left: '15%', delay: 2.5 },
+  { emoji: '🌮', top: '15%', left: '75%', delay: 4 },
+  { emoji: '🥐', top: '50%', left: '5%', delay: 1 },
+  // Dark emojis
+  { emoji: '🍆', top: '35%', left: '20%', delay: 1.2 },
+  { emoji: '🍇', top: '80%', left: '30%', delay: 2.8 },
+  { emoji: '🫐', top: '20%', left: '45%', delay: 0.8 },
+  { emoji: '🥥', top: '70%', left: '60%', delay: 3.5 },
+  { emoji: '🫒', top: '90%', left: '40%', delay: 2.2 },
+  { emoji: '🥝', top: '55%', left: '35%', delay: 1.7 },
+  { emoji: '🍄', top: '45%', left: '80%', delay: 3.1 },
+  { emoji: '🖤', top: '12%', left: '60%', delay: 2.4 },
+];
 
 export default function FreshnessDetectorPage() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -105,8 +126,33 @@ export default function FreshnessDetectorPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-12">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-12 relative overflow-hidden">
+      
+      {/* Floating Food Stickers Background */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {stickers.map((sticker, i) => (
+          <motion.div
+            key={i}
+            className="absolute text-3xl md:text-4xl drop-shadow-xl opacity-60 dark:opacity-40"
+            style={{ top: sticker.top, left: sticker.left }}
+            animate={{ 
+              y: [0, -20, 0], 
+              rotate: [0, 10, -10, 0],
+              scale: [1, 1.05, 1]
+            }}
+            transition={{ 
+              duration: 8 + (i % 3), 
+              repeat: Infinity, 
+              ease: "easeInOut",
+              delay: sticker.delay 
+            }}
+          >
+            {sticker.emoji}
+          </motion.div>
+        ))}
+      </div>
+
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto mb-12">
@@ -278,6 +324,16 @@ export default function FreshnessDetectorPage() {
                         </div>
                         <p className="text-amber-700 dark:text-amber-400/90 leading-relaxed">{result.safetyAdvice}</p>
                       </div>
+
+                      {result.visualDetails && (
+                        <div className="sm:col-span-2 space-y-2 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/50">
+                          <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300 font-semibold mb-1">
+                            <ImageIcon className="h-4 w-4 text-purple-500" />
+                            Visual Characteristics
+                          </div>
+                          <p className="text-slate-600 dark:text-slate-400 leading-relaxed">{result.visualDetails}</p>
+                        </div>
+                      )}
                     </CardContent>
                   </Card>
                 </motion.div>

@@ -2,13 +2,36 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 import { Search, MapPin, Filter, AlertCircle, Calendar } from 'lucide-react';
-// mockData removed
 import { Restaurant } from '@/types';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input, Select } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+
+const restaurantStickers = [
+  { emoji: '🍔', top: '15%', left: '8%' },
+  { emoji: '🍽️', top: '75%', left: '85%' },
+  { emoji: '🧼', top: '40%', left: '92%' },
+  { emoji: '🥗', top: '85%', left: '12%' },
+  { emoji: '🍕', top: '25%', left: '80%' },
+  { emoji: '✨', top: '65%', left: '5%' },
+  { emoji: '🏢', top: '10%', left: '50%' },
+  { emoji: '🍷', top: '90%', left: '50%' },
+  { emoji: '🧹', top: '50%', left: '15%' },
+  { emoji: '🧊', top: '20%', left: '25%' },
+  { emoji: '🍴', top: '80%', left: '70%' },
+  { emoji: '🍩', top: '35%', left: '75%' },
+  { emoji: '🥩', top: '55%', left: '25%' },
+  { emoji: '☕', top: '12%', left: '60%' },
+  { emoji: '🍾', top: '92%', left: '30%' },
+  { emoji: '🧁', top: '68%', left: '60%' },
+  { emoji: '🌮', top: '45%', left: '8%' },
+  { emoji: '📝', top: '8%', left: '35%' },
+  { emoji: '✅', top: '78%', left: '40%' },
+  { emoji: '🥡', top: '28%', left: '95%' },
+];
 
 export default function RestaurantsSearchPage() {
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
@@ -53,22 +76,47 @@ export default function RestaurantsSearchPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-1">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-        <div>
-          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-            Restaurant Hygiene Registry
-          </h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-            Real-time access to health scores, sanitation audits, and safety records.
-          </p>
-        </div>
-        <Link href="/complaint">
-          <Button variant="outline" className="border-rose-200 text-rose-600 dark:border-rose-950 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/20">
-            Report Hygiene Violation
-          </Button>
-        </Link>
+    <div className="relative min-h-[calc(100vh-80px)] overflow-hidden bg-slate-50 dark:bg-slate-950">
+      {/* Floating Emojis Background */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {restaurantStickers.map((sticker, i) => (
+          <motion.div
+            key={`sticker-${i}`}
+            className="absolute text-5xl md:text-6xl drop-shadow-xl opacity-80 dark:opacity-60 z-0"
+            style={{ top: sticker.top, left: sticker.left }}
+            animate={{ 
+              y: [0, -25, 0], 
+              rotate: [0, 15, -15, 0],
+              scale: [1, 1.1, 1]
+            }}
+            transition={{ 
+              duration: 9 + (i % 4), 
+              repeat: Infinity, 
+              ease: "easeInOut",
+              delay: i * 0.8 
+            }}
+          >
+            {sticker.emoji}
+          </motion.div>
+        ))}
       </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex flex-col relative z-10">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+          <div>
+            <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+              Restaurant Hygiene Registry
+            </h1>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+              Real-time access to health scores, sanitation audits, and safety records.
+            </p>
+          </div>
+          <Link href="/complaint">
+            <Button variant="outline" className="border-rose-200 text-rose-600 dark:border-rose-950 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/20">
+              Report Hygiene Violation
+            </Button>
+          </Link>
+        </div>
 
       {/* Filters bar */}
       <Card className="mb-8">
@@ -161,6 +209,7 @@ export default function RestaurantsSearchPage() {
           </CardContent>
         </Card>
       )}
+      </div>
     </div>
   );
 }

@@ -30,7 +30,8 @@ Respond ONLY with a valid JSON object (no markdown, no code fences, no extra tex
   "confidence": 85,
   "shelfLife": "Estimated remaining shelf life, e.g. '3-4 days'",
   "storageRecommendation": "How to store this food properly",
-  "safetyAdvice": "Any food safety advice for this item"
+  "safetyAdvice": "Any food safety advice for this item",
+  "visualDetails": "A detailed description of the visual characteristics of the food, noting color, texture, signs of bruising or mold, and overall appearance"
 }
 
 Rules:
@@ -85,6 +86,7 @@ Rules:
         shelfLife: 'Unable to determine',
         storageRecommendation: 'Unable to determine',
         safetyAdvice: rawContent || 'The AI was unable to analyze this image. Please try again with a clearer photo of a food item.',
+        visualDetails: 'No visual details available due to analysis failure.',
       });
     }
   } catch (error) {

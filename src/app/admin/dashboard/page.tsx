@@ -2,26 +2,40 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ShieldCheck, Users, Building2, AlertTriangle, TrendingUp, Activity, FileText, Bell, LogOut, BarChart3, CheckCircle2 } from 'lucide-react';
+import { ShieldCheck, Users, Building2, AlertTriangle, TrendingUp, Activity, FileText, Bell, LogOut, BarChart3, CheckCircle2, MapPin } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Link from 'next/link';
-
-const stats = [
-  { label: 'Total Restaurants', value: '2,847', change: '+12%', icon: Building2, color: 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400' },
-  { label: 'Active Inspections', value: '156', change: '+8%', icon: FileText, color: 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400' },
-  { label: 'Open Complaints', value: '23', change: '-15%', icon: AlertTriangle, color: 'bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400' },
-  { label: 'Compliance Rate', value: '94.2%', change: '+3.1%', icon: CheckCircle2, color: 'bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400' },
-];
-
-const recentActivity = [
-  { action: 'Restaurant inspection completed', place: 'Golden Spoon Cafe', time: '5 min ago', status: 'success' },
-  { action: 'New complaint filed', place: 'Sunrise Diner', time: '12 min ago', status: 'warning' },
-  { action: 'License renewal approved', place: 'Tandoori Palace', time: '1 hr ago', status: 'success' },
-  { action: 'Critical violation flagged', place: 'Quick Bites Express', time: '2 hrs ago', status: 'danger' },
-  { action: 'Inspection scheduled', place: 'Green Bowl Kitchen', time: '3 hrs ago', status: 'info' },
-];
+import { Badge } from '@/components/ui/badge';
+import { Restaurant } from '@/types';
 
 export default function AdminDashboard() {
+  const [restaurants, setRestaurants] = React.useState<Restaurant[]>([]);
+  const [isLoading, setIsLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    fetch('/api/restaurants')
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data)) setRestaurants(data);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setIsLoading(false);
+      });
+  }, []);
+
+  // Dynamic stats
+  const activeCount = restaurants.filter(r => r.status === 'Active').length;
+  const compliantCount = restaurants.filter(r => r.grade === 'A' || r.grade === 'B').length;
+  const complianceRate = restaurants.length > 0 ? ((compliantCount / restaurants.length) * 100).toFixed(1) : '0.0';
+
+  const stats = [
+    { label: 'Total Restaurants', value: restaurants.length.toString(), change: '+2', icon: Building2, color: 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400' },
+    { label: 'Active Inspections', value: '156', change: '+8%', icon: FileText, color: 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400' },
+    { label: 'Active Directory', value: activeCount.toString(), change: 'Live', icon: Activity, color: 'bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400' },
+    { label: 'Compliance Rate', value: `${complianceRate}%`, change: '+3.1%', icon: CheckCircle2, color: 'bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400' },
+  ];
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
       {/* Top Bar */}
@@ -113,32 +127,54 @@ export default function AdminDashboard() {
             <Card className="bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm border-slate-200 dark:border-slate-800">
               <CardHeader className="border-b border-slate-100 dark:border-slate-800">
                 <CardTitle className="text-lg flex items-center gap-2 text-slate-800 dark:text-slate-200">
-                  <Activity className="h-5 w-5" /> Recent Activity
+                  <Building2 className="h-5 w-5" /> Restaurant Directory
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-0">
                 <div className="divide-y divide-slate-100 dark:divide-slate-800">
-                  {recentActivity.map((item, idx) => (
-                    <motion.div
-                      key={idx}
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.3 + idx * 0.08 }}
-                      className="flex items-center gap-4 px-6 py-4 hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors"
-                    >
-                      <div className={`w-2 h-2 rounded-full shrink-0 ${
-                        item.status === 'success' ? 'bg-emerald-500' :
-                        item.status === 'warning' ? 'bg-amber-500' :
-                        item.status === 'danger' ? 'bg-rose-500' :
-                        'bg-blue-500'
-                      }`} />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-slate-900 dark:text-white">{item.action}</p>
-                        <p className="text-xs text-slate-500 truncate">{item.place}</p>
-                      </div>
-                      <span className="text-xs text-slate-400 shrink-0">{item.time}</span>
-                    </motion.div>
-                  ))}
+                  {isLoading ? (
+                    <div className="p-6 text-center text-slate-500">Loading restaurants...</div>
+                  ) : restaurants.length > 0 ? (
+                    restaurants.map((item, idx) => (
+                      <motion.div
+                        key={item.id}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.3 + idx * 0.08 }}
+                        className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-6 py-4 hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors"
+                      >
+                        <div className="flex items-center gap-4 min-w-0">
+                          <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold shrink-0 ${
+                            item.grade === 'A' ? 'bg-emerald-100 text-emerald-700' :
+                            item.grade === 'B' ? 'bg-blue-100 text-blue-700' :
+                            item.grade === 'C' ? 'bg-amber-100 text-amber-700' :
+                            'bg-rose-100 text-rose-700'
+                          }`}>
+                            {item.grade}
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-sm font-bold text-slate-900 dark:text-white truncate">{item.name}</p>
+                            <p className="text-xs text-slate-500 flex items-center gap-1 mt-0.5">
+                              <MapPin className="h-3 w-3" />
+                              <span className="truncate">{item.address}</span>
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3 shrink-0">
+                          <Badge variant={item.status === 'Active' ? 'success' : item.status === 'Suspended' ? 'danger' : 'warning'}>
+                            {item.status}
+                          </Badge>
+                          <Link href={`/restaurants/${item.id}`}>
+                            <button className="text-xs font-medium text-emerald-600 hover:text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-lg transition-colors">
+                              View Details
+                            </button>
+                          </Link>
+                        </div>
+                      </motion.div>
+                    ))
+                  ) : (
+                    <div className="p-6 text-center text-slate-500">No restaurants found in database.</div>
+                  )}
                 </div>
               </CardContent>
             </Card>

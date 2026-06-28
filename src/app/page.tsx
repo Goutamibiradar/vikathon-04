@@ -27,23 +27,27 @@ export default function LandingPage() {
     <div className="flex flex-col min-h-screen bg-slate-50 dark:bg-slate-950 overflow-x-hidden">
       {/* Hero Section */}
       <section className="relative py-20 md:py-32 flex items-center justify-center bg-radial from-emerald-500/10 via-transparent to-transparent overflow-hidden">
+        
+        {/* Professional Dot Grid Background */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
+
         {/* Floating Background Elements */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden max-w-7xl mx-auto">
           {/* Blobs */}
           <motion.div
             animate={{ y: [0, -20, 0], x: [0, 10, 0], rotate: [0, 5, 0] }}
             transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute top-1/4 left-1/4 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl"
+            className="absolute top-1/4 left-1/4 w-64 h-64 bg-emerald-500/20 rounded-full blur-[100px]"
           />
           <motion.div
             animate={{ y: [0, 30, 0], x: [0, -20, 0], rotate: [0, -10, 0] }}
             transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-            className="absolute bottom-1/4 right-1/4 w-72 h-72 bg-teal-500/10 rounded-full blur-3xl"
+            className="absolute bottom-1/4 right-1/4 w-72 h-72 bg-teal-500/20 rounded-full blur-[100px]"
           />
           <motion.div
             animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.6, 0.3] }}
             transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-emerald-400/5 rounded-full blur-3xl"
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-emerald-400/10 rounded-full blur-[100px]"
           />
 
           {/* Floating Card 1: Hygiene Score */}

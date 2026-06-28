@@ -21,6 +21,24 @@ const SUGGESTIONS = [
   "Best practices for cross-contamination?",
 ];
 
+const assistantStickers = [
+  { emoji: '🤖', top: '15%', left: '8%' },
+  { emoji: '💬', top: '75%', left: '85%' },
+  { emoji: '🧠', top: '40%', left: '92%' },
+  { emoji: '💡', top: '85%', left: '12%' },
+  { emoji: '🍔', top: '25%', left: '80%' },
+  { emoji: '🛡️', top: '65%', left: '5%' },
+  { emoji: '🔍', top: '10%', left: '50%' },
+  { emoji: '📊', top: '90%', left: '50%' },
+  { emoji: '👩‍🍳', top: '50%', left: '15%' },
+  { emoji: '🍎', top: '20%', left: '25%' },
+  { emoji: '🧼', top: '80%', left: '70%' },
+  { emoji: '🦠', top: '35%', left: '75%' },
+  { emoji: '🥩', top: '55%', left: '82%' },
+  { emoji: '🌡️', top: '12%', left: '90%' },
+  { emoji: '🥦', top: '70%', left: '30%' },
+];
+
 export default function AssistantPage() {
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -98,8 +116,33 @@ export default function AssistantPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 h-[calc(100vh-80px)] flex flex-col">
-      <div className="flex items-center gap-3 mb-6">
+    <div className="relative min-h-[calc(100vh-80px)] overflow-hidden bg-slate-50 dark:bg-slate-950">
+      {/* Floating Emojis Background */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {assistantStickers.map((sticker, i) => (
+          <motion.div
+            key={`sticker-${i}`}
+            className="absolute text-5xl md:text-6xl drop-shadow-xl opacity-80 dark:opacity-60 z-0"
+            style={{ top: sticker.top, left: sticker.left }}
+            animate={{ 
+              y: [0, -25, 0], 
+              rotate: [0, 15, -15, 0],
+              scale: [1, 1.1, 1]
+            }}
+            transition={{ 
+              duration: 9 + (i % 4), 
+              repeat: Infinity, 
+              ease: "easeInOut",
+              delay: i * 0.8 
+            }}
+          >
+            {sticker.emoji}
+          </motion.div>
+        ))}
+      </div>
+
+      <div className="max-w-4xl mx-auto px-4 py-8 h-full flex flex-col relative z-10">
+        <div className="flex items-center gap-3 mb-6">
         <div className="h-10 w-10 rounded-full bg-emerald-100 dark:bg-emerald-900/50 flex items-center justify-center">
           <Bot className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
         </div>
@@ -204,6 +247,7 @@ export default function AssistantPage() {
           </div>
         </div>
       </Card>
+      </div>
     </div>
   );
 }

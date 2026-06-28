@@ -29,6 +29,28 @@ const INITIAL_INVENTORY: InventoryItem[] = [
   { id: '5', name: 'flour', quantity: 50, unit: 'kg', category: 'Pantry' },
 ];
 
+const voiceStickers = [
+  // Audio/Voice emojis
+  { emoji: '🎤', top: '15%', left: '8%' },
+  { emoji: '🎙️', top: '75%', left: '85%' },
+  { emoji: '🗣️', top: '40%', left: '92%' },
+  { emoji: '🔊', top: '85%', left: '12%' },
+  { emoji: '🎵', top: '25%', left: '80%' },
+  { emoji: '🎶', top: '65%', left: '5%' },
+  { emoji: '🎧', top: '10%', left: '50%' },
+  { emoji: '💬', top: '90%', left: '50%' },
+  { emoji: '📣', top: '50%', left: '15%' },
+  
+  // Inventory/Food emojis
+  { emoji: '🍅', top: '20%', left: '25%' },
+  { emoji: '🥕', top: '80%', left: '70%' },
+  { emoji: '🧅', top: '35%', left: '75%' },
+  { emoji: '🥩', top: '55%', left: '82%' },
+  { emoji: '🥛', top: '12%', left: '90%' },
+  { emoji: '📦', top: '70%', left: '30%' },
+  { emoji: '📋', top: '30%', left: '15%' },
+];
+
 export default function VoiceInventoryPage() {
   const [inventory, setInventory] = useState<InventoryItem[]>(INITIAL_INVENTORY);
   const [logs, setLogs] = useState<LogEntry[]>([]);
@@ -176,8 +198,55 @@ export default function VoiceInventoryPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-12">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-12 relative overflow-hidden">
+      {/* Background Elements */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {/* Subtle grid pattern */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:32px_32px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
+        
+        {/* Animated Orbs */}
+        <div className="max-w-7xl mx-auto relative h-full">
+          <motion.div
+            animate={{ y: [0, -30, 0], x: [0, 20, 0] }}
+            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute top-[10%] left-[10%] w-96 h-96 bg-blue-500/10 rounded-full blur-[120px]"
+          />
+          <motion.div
+            animate={{ y: [0, 40, 0], x: [0, -30, 0] }}
+            transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+            className="absolute bottom-[20%] right-[5%] w-[30rem] h-[30rem] bg-indigo-500/10 rounded-full blur-[120px]"
+          />
+          <motion.div
+            animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
+            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute top-[40%] right-[40%] w-64 h-64 bg-emerald-500/10 rounded-full blur-[100px]"
+          />
+        </div>
+        
+        {/* Floating Voice Emojis */}
+        {voiceStickers.map((sticker, i) => (
+          <motion.div
+            key={`sticker-${i}`}
+            className="absolute text-5xl md:text-6xl drop-shadow-xl opacity-80 dark:opacity-60 z-0"
+            style={{ top: sticker.top, left: sticker.left }}
+            animate={{ 
+              y: [0, -25, 0], 
+              rotate: [0, 15, -15, 0],
+              scale: [1, 1.1, 1]
+            }}
+            transition={{ 
+              duration: 9 + (i % 4), 
+              repeat: Infinity, 
+              ease: "easeInOut",
+              delay: i * 0.8 
+            }}
+          >
+            {sticker.emoji}
+          </motion.div>
+        ))}
+      </div>
+
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Header */}
         <div className="mb-10 text-center max-w-2xl mx-auto">
