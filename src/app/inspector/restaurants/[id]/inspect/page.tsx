@@ -105,16 +105,24 @@ export default function NewInspectionPage({ params }: { params: Promise<{ id: st
 
   const previewGrade = getPreviewGrade(calculatedScore);
 
-  const handleSimulateUpload = () => {
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
     setIsUploading(true);
-    setTimeout(() => {
-      // Mock generate standard image url
-      const mockUrl = 'https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=400&q=80';
-      setUploadedImage(mockUrl);
-      setValue('imageUrl', mockUrl);
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const base64Str = event.target?.result as string;
+      setUploadedImage(base64Str);
+      setValue('imageUrl', base64Str);
       setIsUploading(false);
-      toast('Kitchen image uploaded successfully (simulation completed).', 'success');
-    }, 1000);
+      toast('Kitchen image uploaded successfully.', 'success');
+    };
+    reader.onerror = () => {
+      setIsUploading(false);
+      toast('Failed to upload image.', 'error');
+    };
+    reader.readAsDataURL(file);
   };
 
   const onSubmit = async (data: InspectionFormValues) => {
@@ -268,17 +276,19 @@ export default function NewInspectionPage({ params }: { params: Promise<{ id: st
                           <Camera className="h-8 w-8 text-slate-400" />
                           <div>
                             <div className="text-xs font-bold text-slate-800 dark:text-slate-200">Upload kitchen area evidence image</div>
-                            <div className="text-[10px] text-slate-400 mt-1">Accepts PNG, JPG (simulation mode)</div>
+                            <div className="text-[10px] text-slate-400 mt-1">Accepts PNG, JPG, JPEG</div>
                           </div>
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={handleSimulateUpload}
-                            isLoading={isUploading}
-                          >
-                            Simulate Upload
-                          </Button>
+                          
+                          <label className="cursor-pointer inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background border border-input hover:bg-accent hover:text-accent-foreground h-9 px-3">
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={handleImageUpload}
+                              disabled={isUploading}
+                            />
+                            {isUploading ? 'Uploading...' : 'Select File'}
+                          </label>
                         </>
                       )}
                     </div>
