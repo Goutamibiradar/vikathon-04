@@ -17,6 +17,29 @@ const historicalData = [
   { month: 'Jun', foodWaste: 85, waterUsage: 3600, plasticUsage: 25, carbonFootprint: 250 },
 ];
 
+const MetricCard = ({ title, value, unit, icon: Icon, colorClass, trend }: any) => (
+  <Card className="bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm border-slate-200 dark:border-slate-800">
+    <CardContent className="p-6">
+      <div className="flex items-start justify-between">
+        <div>
+          <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-1">{title}</p>
+          <div className="flex items-baseline gap-2">
+            <h3 className="text-3xl font-bold text-slate-900 dark:text-white">{value}</h3>
+            <span className="text-sm font-semibold text-slate-500">{unit}</span>
+          </div>
+          <div className="flex items-center gap-1 mt-2 text-xs font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 px-2 py-1 rounded-full w-fit">
+            <TrendingDown className="h-3 w-3" />
+            {trend}% from last month
+          </div>
+        </div>
+        <div className={`p-3 rounded-2xl ${colorClass}`}>
+          <Icon className="h-6 w-6" />
+        </div>
+      </div>
+    </CardContent>
+  </Card>
+);
+
 export default function SustainabilityDashboard() {
   const [currentMetrics, setCurrentMetrics] = useState({
     foodWaste: 85,
@@ -51,29 +74,6 @@ export default function SustainabilityDashboard() {
     fetchInsights();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Run once on mount
-
-  const MetricCard = ({ title, value, unit, icon: Icon, colorClass, trend }: any) => (
-    <Card className="bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm border-slate-200 dark:border-slate-800">
-      <CardContent className="p-6">
-        <div className="flex items-start justify-between">
-          <div>
-            <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-1">{title}</p>
-            <div className="flex items-baseline gap-2">
-              <h3 className="text-3xl font-bold text-slate-900 dark:text-white">{value}</h3>
-              <span className="text-sm font-semibold text-slate-500">{unit}</span>
-            </div>
-            <div className="flex items-center gap-1 mt-2 text-xs font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 px-2 py-1 rounded-full w-fit">
-              <TrendingDown className="h-3 w-3" />
-              {trend}% from last month
-            </div>
-          </div>
-          <div className={`p-3 rounded-2xl ${colorClass}`}>
-            <Icon className="h-6 w-6" />
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-12">
